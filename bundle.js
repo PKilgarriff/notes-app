@@ -67,10 +67,10 @@
           const notes = this.model.getNotes();
           notes.forEach((note) => {
             let div = document.createElement("div");
-            div.className = "note";
-            let p = document.createElement("p");
-            p.innerText = note;
-            div.append(p);
+            Object.assign(div, {
+              className: "note",
+              innerText: note
+            });
             this.notesListEl.append(div);
           });
         }

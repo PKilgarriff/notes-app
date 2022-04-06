@@ -5,6 +5,7 @@
 const fs = require("fs");
 const NotesView = require("./notesView.js");
 const NotesModel = require("./notesModel.js");
+const { Console } = require("console");
 
 let model;
 let view;
@@ -21,9 +22,9 @@ describe("NotesView", () => {
     const submitButtonEl = document.querySelector("#note-submit-btn");
     submitButtonEl.click();
 
-    expect(document.querySelector(".note :nth-child(1)").innerText).toEqual(
-      "eGgS"
-    );
+    expect(
+      document.querySelector("#notes-list :nth-child(1)").innerText
+    ).toEqual("eGgS");
   });
 
   it("should display all notes", () => {

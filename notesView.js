@@ -1,12 +1,11 @@
 const NotesModel = require("./notesModel.js");
-const NotesAPI = require("./notesApi.js");
 
 class NotesView {
-  constructor(model = new NotesModel(), api = new NotesAPI()) {
+  constructor(model = new NotesModel()) {
     this.model = model;
     this.notesListEl = document.querySelector("#notes-list");
     this.submitButtonEl = document.querySelector("#note-submit-btn");
-    this.api = api
+
     this.setupEventListeners();
   }
 
@@ -24,10 +23,10 @@ class NotesView {
     const notes = this.model.getNotes();
     notes.forEach((note) => {
       let div = document.createElement("div");
-      div.className = "note";
-      let p = document.createElement("p");
-      p.innerText = note;
-      div.append(p);
+      Object.assign(div, {
+        className: "note",
+        innerText: note,
+      });
       this.notesListEl.append(div);
     });
   }
