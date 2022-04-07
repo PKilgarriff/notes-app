@@ -1,8 +1,10 @@
-const NotesModel = require("./notesModel.js");
+const NotesModel = require("./notesModel");
+const NotesApi = require("./notesApi");
 
 class NotesView {
-  constructor(model = new NotesModel()) {
+  constructor(model = new NotesModel(), api = new NotesApi()) {
     this.model = model;
+    this.api = api;
     this.notesListEl = document.querySelector("#notes-list");
     this.submitButtonEl = document.querySelector("#note-submit-btn");
 
@@ -13,8 +15,11 @@ class NotesView {
     this.submitButtonEl.addEventListener("click", () => {
       let inputText = document.querySelector("#note-input");
       this.model.addNote(inputText.value);
-      inputText.value = "";
+      this.api.createNote(inputText.value, (data) => {
+        console.log(data);
+      });
       this.displayNotes();
+      inputText.value = "";
     });
   }
 

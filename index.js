@@ -6,7 +6,7 @@ const api = new NotesApi();
 const model = new NotesModel();
 const view = new NotesView(model, api);
 
-view.displayNotes();
+// view.displayNotes();
 
 console.log(model.getNotes());
 

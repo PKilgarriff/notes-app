@@ -16,7 +16,7 @@
         }
         setNotes(notes) {
           notes.forEach((note) => {
-            this.notes.push(note);
+            this.addNote(note);
           });
         }
         addNote(note) {
@@ -30,14 +30,21 @@
   // notesApi.js
   var require_notesApi = __commonJS({
     "notesApi.js"(exports, module) {
-      var NotesAPI2 = class {
+      var NotesApi2 = class {
         loadNotes(callback) {
-          fetch("http://localhost:3000/notes").then((response) => response.json()).then((data) => {
-            callback(data);
-          });
+          fetch("http://localhost:3000/notes").then((response) => response.json()).then((data) => callback(data));
+        }
+        createNote(noteMessage, callback) {
+          fetch("http://localhost:3000/notes", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ content: noteMessage })
+          }).then((response) => response.json()).then((data) => callback(data));
         }
       };
-      module.exports = NotesAPI2;
+      module.exports = NotesApi2;
     }
   });
 
@@ -45,21 +52,24 @@
   var require_notesView = __commonJS({
     "notesView.js"(exports, module) {
       var NotesModel2 = require_notesModel();
-      var NotesAPI2 = require_notesApi();
+      var NotesApi2 = require_notesApi();
       var NotesView2 = class {
-        constructor(model2 = new NotesModel2(), api2 = new NotesAPI2()) {
+        constructor(model2 = new NotesModel2(), api2 = new NotesApi2()) {
           this.model = model2;
+          this.api = api2;
           this.notesListEl = document.querySelector("#notes-list");
           this.submitButtonEl = document.querySelector("#note-submit-btn");
-          this.api = api2;
           this.setupEventListeners();
         }
         setupEventListeners() {
           this.submitButtonEl.addEventListener("click", () => {
             let inputText = document.querySelector("#note-input");
             this.model.addNote(inputText.value);
-            inputText.value = "";
+            this.api.createNote(inputText.value, (data) => {
+              console.log(data);
+            });
             this.displayNotes();
+            inputText.value = "";
           });
         }
         displayNotes() {
@@ -82,11 +92,10 @@
   // index.js
   var NotesView = require_notesView();
   var NotesModel = require_notesModel();
-  var NotesAPI = require_notesApi();
-  var api = new NotesAPI();
+  var NotesApi = require_notesApi();
+  var api = new NotesApi();
   var model = new NotesModel();
   var view = new NotesView(model, api);
-  view.displayNotes();
   console.log(model.getNotes());
   api.loadNotes((notes) => {
     model.setNotes(notes);

@@ -5,19 +5,27 @@
 const fs = require("fs");
 const NotesView = require("./notesView.js");
 const NotesModel = require("./notesModel.js");
-const { Console } = require("console");
-
-let model;
-let view;
+const apiMock = {
+  loadNotes: () => [
+    "This note is coming from the server",
+    "egg",
+    "Cracking show old chap!",
+    "Eggsactly this",
+  ],
+  createNote: (input) => console.log(input),
+};
 
 beforeEach(() => {
   document.body.innerHTML = fs.readFileSync("./index.html");
   model = new NotesModel();
-  view = new NotesView(model);
+  view = new NotesView(model, apiMock);
 });
 
 describe("NotesView", () => {
-  it("a note should appear once the add note button is pressed", () => {
+  it("a note should appear once the add note button is pressed", (done) => {
+    console.log(apiMock.loadNotes());
+    console.log(apiMock.createNote());
+
     document.querySelector("#note-input").value = "eGgS";
     const submitButtonEl = document.querySelector("#note-submit-btn");
     submitButtonEl.click();
@@ -25,6 +33,7 @@ describe("NotesView", () => {
     expect(
       document.querySelector("#notes-list :nth-child(1)").innerText
     ).toEqual("eGgS");
+    done();
   });
 
   it("should display all notes", () => {
