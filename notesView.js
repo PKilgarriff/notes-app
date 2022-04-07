@@ -7,7 +7,7 @@ class NotesView {
     this.api = api;
     this.notesListEl = document.querySelector("#notes-list");
     this.submitButtonEl = document.querySelector("#note-submit-btn");
-
+    this.mainContainerEl = document.querySelector("#main-container");
     this.setupEventListeners();
   }
 
@@ -34,6 +34,15 @@ class NotesView {
       });
       this.notesListEl.append(div);
     });
+  }
+
+  displayError() {
+    const errorEl = document.createElement("div");
+    Object.assign(errorEl, {
+      id: "error-message",
+      innerText: "Eggscuse me, something's cracked",
+    });
+    this.mainContainerEl.append(errorEl);
   }
 }
 

@@ -15,6 +15,14 @@ describe(NotesModel, () => {
     });
   });
 
+  describe("Set Notes", () => {
+    it("stores an array of notes", () => {
+      const notes = new NotesModel();
+      notes.setNotes(["Eg", "Egg", "Eggie"]);
+      expect(notes.getNotes()).toEqual(["Eg", "Egg", "Eggie"]);
+    });
+  });
+
   describe("Add note", () => {
     it("should respond to add note", () => {
       const notes = new NotesModel();

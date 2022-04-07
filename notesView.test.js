@@ -23,12 +23,11 @@ beforeEach(() => {
 
 describe("NotesView", () => {
   it("a note should appear once the add note button is pressed", (done) => {
-    console.log(apiMock.loadNotes());
-    console.log(apiMock.createNote());
-
     document.querySelector("#note-input").value = "eGgS";
     const submitButtonEl = document.querySelector("#note-submit-btn");
     submitButtonEl.click();
+
+    console.log(document.body.innerHTML);
 
     expect(
       document.querySelector("#notes-list :nth-child(1)").innerText
@@ -55,5 +54,13 @@ describe("NotesView", () => {
     });
 
     expect(document.querySelectorAll(".note").length).toEqual(3);
+  });
+
+  it("should display an error message if required", () => {
+    view.displayError();
+
+    expect(document.querySelector("#error-message").innerText).toEqual(
+      "Eggscuse me, something's cracked"
+    );
   });
 });

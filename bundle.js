@@ -31,8 +31,8 @@
   var require_notesApi = __commonJS({
     "notesApi.js"(exports, module) {
       var NotesApi2 = class {
-        loadNotes(callback) {
-          fetch("http://localhost:3000/notes").then((response) => response.json()).then((data) => callback(data));
+        loadNotes(callback, errorCallback) {
+          fetch("http://localhost:3000/notes").then((response) => response.json()).then((data) => callback(data)).catch(errorCallback());
         }
         createNote(noteMessage, callback) {
           fetch("http://localhost:3000/notes", {
@@ -59,6 +59,7 @@
           this.api = api2;
           this.notesListEl = document.querySelector("#notes-list");
           this.submitButtonEl = document.querySelector("#note-submit-btn");
+          this.mainContainerEl = document.querySelector("#main-container");
           this.setupEventListeners();
         }
         setupEventListeners() {
@@ -84,6 +85,14 @@
             this.notesListEl.append(div);
           });
         }
+        displayError() {
+          const errorEl = document.createElement("div");
+          Object.assign(errorEl, {
+            id: "error-message",
+            innerText: "Eggscuse me, something's cracked"
+          });
+          this.mainContainerEl.append(errorEl);
+        }
       };
       module.exports = NotesView2;
     }
@@ -100,5 +109,7 @@
   api.loadNotes((notes) => {
     model.setNotes(notes);
     view.displayNotes();
+  }, () => {
+    view.displayError();
   });
 })();
