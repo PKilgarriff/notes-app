@@ -1,9 +1,12 @@
 class NotesApi {
-  loadNotes(callback, errorCallback) {
-    fetch("http://localhost:3000/notes")
-      .then((response) => response.json())
-      .then((data) => callback(data))
-      .catch(errorCallback());
+  async loadNotes(callback, errorCallback) {
+    try {
+      const response = await fetch("http://localhost:3000/notes");
+      const data = await response.json();
+      callback(data);
+    } catch (error) {
+      errorCallback();
+    }
   }
   createNote(noteMessage, callback) {
     fetch("http://localhost:3000/notes", {
