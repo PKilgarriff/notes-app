@@ -37,17 +37,25 @@
             const data = await response.json();
             callback(data);
           } catch (error) {
-            errorCallback();
+            errorCallback("Cannot load \u{1F95A}\u{1F95A}\u{1F95A}, coneggtion scrambled");
           }
         }
-        createNote(noteMessage, callback) {
-          fetch("http://localhost:3000/notes", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ content: noteMessage })
-          }).then((response) => response.json()).then((data) => callback(data));
+        async createNote(noteMessage, callback, errorCallback) {
+          try {
+            const response = await fetch("http://localhost:3000/notes", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ content: noteMessage })
+            });
+            const data = await response.json();
+            console.log(data);
+            callback(data);
+          } catch (error) {
+            console.log(error.message, error.name);
+            errorCallback("Cannot create Egg, conneggtion scrambled");
+          }
         }
       };
       module.exports = NotesApi2;
@@ -74,6 +82,8 @@
             this.model.addNote(inputText.value);
             this.api.createNote(inputText.value, (data) => {
               console.log(data);
+            }, (message) => {
+              this.displayError(message);
             });
             this.displayNotes();
             inputText.value = "";
@@ -91,11 +101,12 @@
             this.notesListEl.append(div);
           });
         }
-        displayError() {
+        displayError(errorMessage = "Eggscuse me, something's cracked") {
           const errorEl = document.createElement("div");
+          console.log(errorMessage);
           Object.assign(errorEl, {
             id: "error-message",
-            innerText: "Eggscuse me, something's cracked"
+            innerText: errorMessage
           });
           this.mainContainerEl.append(errorEl);
         }
@@ -115,7 +126,7 @@
   api.loadNotes((notes) => {
     model.setNotes(notes);
     view.displayNotes();
-  }, () => {
-    view.displayError();
+  }, (message) => {
+    view.displayError(message);
   });
 })();

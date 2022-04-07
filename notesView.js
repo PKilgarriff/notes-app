@@ -15,9 +15,15 @@ class NotesView {
     this.submitButtonEl.addEventListener("click", () => {
       let inputText = document.querySelector("#note-input");
       this.model.addNote(inputText.value);
-      this.api.createNote(inputText.value, (data) => {
-        console.log(data);
-      });
+      this.api.createNote(
+        inputText.value,
+        (data) => {
+          console.log(data);
+        },
+        (message) => {
+          this.displayError(message);
+        }
+      );
       this.displayNotes();
       inputText.value = "";
     });
@@ -36,11 +42,12 @@ class NotesView {
     });
   }
 
-  displayError() {
+  displayError(errorMessage = "Eggscuse me, something's cracked") {
     const errorEl = document.createElement("div");
+    console.log(errorMessage);
     Object.assign(errorEl, {
       id: "error-message",
-      innerText: "Eggscuse me, something's cracked",
+      innerText: errorMessage,
     });
     this.mainContainerEl.append(errorEl);
   }

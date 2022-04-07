@@ -5,19 +5,25 @@ class NotesApi {
       const data = await response.json();
       callback(data);
     } catch (error) {
-      errorCallback();
+      errorCallback("Cannot load 🥚🥚🥚, coneggtion scrambled");
     }
   }
-  createNote(noteMessage, callback) {
-    fetch("http://localhost:3000/notes", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ content: noteMessage }),
-    })
-      .then((response) => response.json())
-      .then((data) => callback(data));
+  async createNote(noteMessage, callback, errorCallback) {
+    try {
+      const response = await fetch("http://localhost:3000/notes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ content: noteMessage }),
+      });
+      const data = await response.json();
+      console.log(data);
+      callback(data);
+    } catch (error) {
+      console.log(error.message, error.name);
+      errorCallback("Cannot create Egg, conneggtion scrambled");
+    }
   }
 }
 

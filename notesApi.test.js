@@ -23,8 +23,6 @@ describe("NotesApi", () => {
   });
   it("should send a post request with a new note for the backend", (done) => {
     fetch.mockResponseOnce(async (request) => {
-      console.log(`Method: ${request.method}`);
-
       return JSON.stringify({
         0: "Egg-based humour cracks me up",
       });

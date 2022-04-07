@@ -12,7 +12,7 @@ const apiMock = {
     "Cracking show old chap!",
     "Eggsactly this",
   ],
-  createNote: (input) => console.log(input),
+  createNote: (input) => "",
 };
 
 beforeEach(() => {
@@ -26,8 +26,6 @@ describe("NotesView", () => {
     document.querySelector("#note-input").value = "eGgS";
     const submitButtonEl = document.querySelector("#note-submit-btn");
     submitButtonEl.click();
-
-    console.log(document.body.innerHTML);
 
     expect(
       document.querySelector("#notes-list :nth-child(1)").innerText
