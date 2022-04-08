@@ -4,29 +4,6 @@
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
 
-  // notesModel.js
-  var require_notesModel = __commonJS({
-    "notesModel.js"(exports, module) {
-      var NotesModel2 = class {
-        constructor() {
-          this.notes = [];
-        }
-        getNotes() {
-          return this.notes;
-        }
-        setNotes(notes) {
-          notes.forEach((note) => {
-            this.addNote(note);
-          });
-        }
-        addNote(note) {
-          this.notes.push(note);
-        }
-      };
-      module.exports = NotesModel2;
-    }
-  });
-
   // notesApi.js
   var require_notesApi = __commonJS({
     "notesApi.js"(exports, module) {
@@ -41,24 +18,61 @@
           }
         }
         async createNote(noteMessage, callback, errorCallback) {
-          try {
-            const response = await fetch("http://localhost:3000/notes", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify({ content: noteMessage })
-            });
-            const data = await response.json();
-            console.log(data);
-            callback(data);
-          } catch (error) {
-            console.log(error.message, error.name);
-            errorCallback("Cannot create Egg, conneggtion scrambled");
+          if (noteMessage === "") {
+            errorCallback("Cannot create an empty Egg");
+          } else {
+            try {
+              const response = await fetch("http://localhost:3000/notes", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ content: noteMessage })
+              });
+              const data = await response.json();
+              console.log(data);
+              callback(data);
+            } catch (error) {
+              console.log(error.message, error.name);
+              errorCallback("Cannot create Egg, conneggtion scrambled");
+            }
           }
         }
       };
       module.exports = NotesApi2;
+    }
+  });
+
+  // notesModel.js
+  var require_notesModel = __commonJS({
+    "notesModel.js"(exports, module) {
+      var NotesApi2 = require_notesApi();
+      var NotesModel2 = class {
+        constructor(api2 = new NotesApi2()) {
+          this.notes = [];
+          this.api = api2;
+          this.errorCallback = (message) => {
+            console.log(`Error Callback: ${message}`);
+          };
+        }
+        getNotes() {
+          return this.notes;
+        }
+        setNotes(notes) {
+          notes.forEach((note) => {
+            this.addNote(this.errorCallback, note);
+          });
+        }
+        addNote(errorCallback, note) {
+          this.notes.push(note);
+          this.api.createNote(note, (data) => {
+            console.log(data);
+          }, (errorMessage) => {
+            errorCallback(errorMessage);
+          });
+        }
+      };
+      module.exports = NotesModel2;
     }
   });
 
@@ -73,20 +87,23 @@
           this.api = api2;
           this.notesListEl = document.querySelector("#notes-list");
           this.submitButtonEl = document.querySelector("#note-submit-btn");
+          this.textInputEl = document.querySelector("#note-input");
           this.mainContainerEl = document.querySelector("#main-container");
+          this.errorContainerEl = document.querySelector("#error-container");
           this.setupEventListeners();
         }
         setupEventListeners() {
           this.submitButtonEl.addEventListener("click", () => {
-            let inputText = document.querySelector("#note-input");
-            this.model.addNote(inputText.value);
-            this.api.createNote(inputText.value, (data) => {
-              console.log(data);
-            }, (message) => {
+            this.model.addNote((message) => {
               this.displayError(message);
-            });
+            }, this.textInputEl.value);
             this.displayNotes();
-            inputText.value = "";
+            this.textInputEl.value = "";
+          });
+          this.textInputEl.addEventListener("keypress", (event) => {
+            if (event.key === "Enter") {
+              this.submitButtonEl.click();
+            }
           });
         }
         displayNotes() {
@@ -108,7 +125,7 @@
             id: "error-message",
             innerText: errorMessage
           });
-          this.mainContainerEl.append(errorEl);
+          this.errorContainerEl.append(errorEl);
         }
       };
       module.exports = NotesView2;

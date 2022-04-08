@@ -14,6 +14,9 @@ const apiMock = {
   ],
   createNote: (input) => "",
 };
+const errorCallback = (message) => {
+  console.log(`Error Callback: ${message}`);
+};
 
 beforeEach(() => {
   document.body.innerHTML = fs.readFileSync("./index.html");
@@ -34,8 +37,8 @@ describe("NotesView", () => {
   });
 
   it("should display all notes", () => {
-    model.addNote("eggs");
-    model.addNote("eggstra eggs");
+    model.addNote(errorCallback, "eggs");
+    model.addNote(errorCallback, "eggstra eggs");
 
     view.displayNotes();
 

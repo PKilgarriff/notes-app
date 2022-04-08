@@ -7,25 +7,24 @@ class NotesView {
     this.api = api;
     this.notesListEl = document.querySelector("#notes-list");
     this.submitButtonEl = document.querySelector("#note-submit-btn");
+    this.textInputEl = document.querySelector("#note-input");
     this.mainContainerEl = document.querySelector("#main-container");
+    this.errorContainerEl = document.querySelector("#error-container");
     this.setupEventListeners();
   }
 
   setupEventListeners() {
     this.submitButtonEl.addEventListener("click", () => {
-      let inputText = document.querySelector("#note-input");
-      this.model.addNote(inputText.value);
-      this.api.createNote(
-        inputText.value,
-        (data) => {
-          console.log(data);
-        },
-        (message) => {
-          this.displayError(message);
-        }
-      );
+      this.model.addNote((message) => {
+        this.displayError(message);
+      }, this.textInputEl.value);
       this.displayNotes();
-      inputText.value = "";
+      this.textInputEl.value = "";
+    });
+    this.textInputEl.addEventListener("keypress", (event) => {
+      if (event.key === "Enter") {
+        this.submitButtonEl.click();
+      }
     });
   }
 
@@ -49,7 +48,7 @@ class NotesView {
       id: "error-message",
       innerText: errorMessage,
     });
-    this.mainContainerEl.append(errorEl);
+    this.errorContainerEl.append(errorEl);
   }
 }
 

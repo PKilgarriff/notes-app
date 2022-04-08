@@ -1,4 +1,7 @@
 const NotesModel = require("./notesModel.js");
+const errorCallback = (message) => {
+  console.log(`Error Callback: ${message}`);
+};
 
 describe(NotesModel, () => {
   describe("Get notes", () => {
@@ -10,7 +13,7 @@ describe(NotesModel, () => {
 
     it("should return the added notes", () => {
       const anInterestingNote = "abcdefU";
-      notes.addNote(anInterestingNote);
+      notes.addNote(errorCallback, anInterestingNote);
       expect(notes.getNotes()).toEqual([anInterestingNote]);
     });
   });
@@ -27,7 +30,7 @@ describe(NotesModel, () => {
     it("should respond to add note", () => {
       const notes = new NotesModel();
       expect(() => {
-        notes.addNote();
+        notes.addNote(errorCallback, "Egg Test");
       }).not.toThrow();
     });
   });
